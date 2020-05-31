@@ -3,28 +3,30 @@ package dev.craftsmanship.ddd.payroll.domain.cargo;
 import dev.craftsmanship.ddd.payroll.domain.Resultado;
 import lombok.Getter;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 import static dev.craftsmanship.ddd.payroll.utils.Erros.parametroInvalido;
 
+@Entity
 @Getter
 public class Cargo implements Serializable, CargoContrato {
 
-    //TODO create a Identificacao class in order to encapsulate UUID handling
-    //TODO create a CargoID class extending Identificacao for code readability purposes
+    @Id
     private UUID identificacao;
 
-    //TODO replace attribute type with EntidadeID since it is available
     private UUID entidadeID;
 
-    //TODO create a Texto class to encapsulate text field validations like minimum and maximum size
     private String descricao;
 
+    @Enumerated(EnumType.ORDINAL)
     private NaturezaCargo natureza;
 
-    //TODO create a Valor class to encapsulate number validations like minimum and maximum value
     private double valor;
 
     @Deprecated(since = "For ORM framework use only.")

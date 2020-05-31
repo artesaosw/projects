@@ -1,26 +1,30 @@
 package dev.craftsmanship.ddd.payroll.domain.entidade;
 
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 import lombok.Getter;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-import static dev.craftsmanship.ddd.payroll.utils.Erros.parametroInvalido;
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
+@Entity
 @Getter
 public class Entidade implements EntidadeContrato, Serializable {
 
-    //TODO create a Identificacao class in order to encapsulate UUID handling
-    //TODO create a EntidadeID class extending Identificacao for code readability purposes
+    @Id
     private UUID identificacao;
 
-    //TODO create a Texto class to encapsulate text field validations like minimum and maximum size
     private String razaoSocial;
 
-    //TODO create a Cnpj class to encapsulate CNPJ digit validation
     private String cnpj;
 
+    @Enumerated(EnumType.ORDINAL)
     private TipoAdministracao tipoAdministracao;
 
     @Deprecated(since = "For ORM framework use only.")
@@ -28,17 +32,11 @@ public class Entidade implements EntidadeContrato, Serializable {
 
     public Entidade(String razaoSocial, String cnpj, TipoAdministracao tipoAdministracao) {
 
-        if (razaoSocial == null || razaoSocial.trim().length() < 3) {
-            parametroInvalido("Razão social deve ser informada.");
-        }
+        naoNulo(razaoSocial, TipoErro.PARAMETRO_INVALIDO, "Razão social deve ser informada.");
 
-        if (cnpj == null || cnpj.trim().length() != 14) {
-            parametroInvalido("Um cnpj válido deve ser informado.");
-        }
+        naoNulo(cnpj, TipoErro.PARAMETRO_INVALIDO, "Um cnpj válido deve ser informado.");
 
-        if (tipoAdministracao == null) {
-            parametroInvalido("Tipo de administração deve ser informado.");
-        }
+        naoNulo(tipoAdministracao, TipoErro.PARAMETRO_INVALIDO, "Tipo de administração deve ser informado.");
 
         //TODO validate CNPJ and throw an IllegalArgumentException if invalid.
 

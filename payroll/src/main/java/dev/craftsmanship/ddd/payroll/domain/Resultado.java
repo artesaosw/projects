@@ -1,9 +1,12 @@
 package dev.craftsmanship.ddd.payroll.domain;
 
 import dev.craftsmanship.ddd.payroll.utils.Erros;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
+
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
 public class Resultado {
 
@@ -46,21 +49,15 @@ public class Resultado {
     }
 
     private static void validarMensagem(String mensagem) {
-        if (mensagem == null) {
-            Erros.parametroInvalido("Mensagem é esperada no caso de resultado negativo.");
-        }
+        naoNulo(mensagem, TipoErro.PARAMETRO_INVALIDO, "Mensagem é esperada no caso de resultado negativo.");
     }
 
     private static void validarDadosAdicionais(Serializable dadosAdicionais) {
-        if (dadosAdicionais == null) {
-            Erros.parametroInvalido("Dados adicionais esperados para objeto resultado.");
-        }
+        naoNulo(dadosAdicionais, TipoErro.PARAMETRO_INVALIDO, "Dados adicionais esperados para objeto resultado.");
     }
 
     private static void validarExcecao(Throwable excecao) {
-        if (excecao == null) {
-            Erros.parametroInvalido("Exceção esperada para objeto resultado.");
-        }
+        naoNulo(excecao, TipoErro.PARAMETRO_INVALIDO, "Exceção esperada para objeto resultado.");
     }
 
     public static Resultado positivo() {

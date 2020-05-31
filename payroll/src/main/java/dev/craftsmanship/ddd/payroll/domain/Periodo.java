@@ -1,10 +1,14 @@
 package dev.craftsmanship.ddd.payroll.domain;
 
 import dev.craftsmanship.ddd.payroll.utils.Erros;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
+import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
 
 @Getter
 public class Periodo implements Serializable {
@@ -15,13 +19,10 @@ public class Periodo implements Serializable {
 
     public Periodo(LocalDate inicio, LocalDate termino) {
 
-        if (inicio == null) {
-            Erros.parametroInvalido("Inicio do período não foi informado.");
-        }
+        naoNulo(inicio, TipoErro.PARAMETRO_INVALIDO, "Inicio do período não foi informado.");
+        naoNulo(termino, TipoErro.PARAMETRO_INVALIDO, "Término do período não foi informado.");
 
-        if (termino != null && inicio.isAfter(termino)) {
-            Erros.informacoesInconsistentes("Término deve ser após o início.");
-        }
+        menorQue(inicio, termino, TipoErro.INFORMACAO_INCONSISTENTE, "Término deve ser após o início.");
 
         this.inicio = inicio;
         this.termino = termino;
@@ -34,7 +35,7 @@ public class Periodo implements Serializable {
     public boolean contem(Periodo other){
 
         if (!completo()){
-            Erros.operacaoInvalida("Operação não pode ser realizada em períodos não completos.");
+            operacaoInvalida("Operação não pode ser realizada em períodos não completos.");
         }
 
         if (other == null || !other.completo()) {

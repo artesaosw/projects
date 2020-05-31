@@ -16,11 +16,14 @@ public class EntidadeDados implements EntidadeContrato, Serializable {
 
     private String cnpj;
 
+    private TipoAdministracao tipoAdministracao;
+
     public EntidadeDados() { }
 
     public EntidadeDados(EntidadeContrato contrato) {
         this.identificacao = contrato.getIdentificacao();
         this.razaoSocial = contrato.getRazaoSocial();
         this.cnpj = contrato.getCnpj();
+        this.tipoAdministracao = contrato.getTipoAdministracao();
     }
 }
