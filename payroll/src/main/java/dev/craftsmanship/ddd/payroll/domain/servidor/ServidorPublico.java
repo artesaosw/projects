@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Getter
-public class ServidorPublico {
+public class ServidorPublico implements ServidorPublicoContrato {
 
     private UUID identificacao;
 
@@ -95,30 +95,36 @@ public class ServidorPublico {
         }
     }
 
-    private Map<UUID, VinculoPublico> vinculosAtivosPorEntidade(){
-
-        if (vinculos == null) {
-            return new HashMap<>();
-        }
-
-        Map<UUID, List<VinculoPublico>> mapa = vinculos
+    private Map<UUID, List<VinculoPublico>> filtrarVinculosAtivos() {
+        return vinculos
                 .stream()
                 .filter(vp -> vp.isAtivo())
                 .collect(
                         Collectors
                                 .groupingBy(
                                         VinculoPublico::getEntidadeID));
+    }
 
-        verificarMaisDeUmVinculoAtivoPorEntidade(mapa);
+    private Map<UUID, VinculoPublico> vinculoAtivoPorEntidade(){
 
-        return mapa
+        if (vinculos == null) {
+            return new HashMap<>();
+        }
+
+        Map<UUID, List<VinculoPublico>> vinculosAtivosPorEntidade = filtrarVinculosAtivos();
+
+        //Garante que só há um vínculo ativo por entidade ou um erro é reportado
+        verificarMaisDeUmVinculoAtivoPorEntidade(vinculosAtivosPorEntidade);
+
+        //Converte o Map<UUID, List<VinculoPublico>> para Map<UUID, VinculoPublico>
+        return vinculosAtivosPorEntidade
                 .keySet()
                 .stream()
                 .collect(
                         Collectors
                                 .toMap(
                                         Function.identity(),
-                                        k -> mapa.get(k).get(0)));
+                                        k -> vinculosAtivosPorEntidade.get(k).get(0)));
     }
 
     public void registrarNomeacaoVinculo(Cargo cargo, LocalDate admissao){
@@ -133,7 +139,7 @@ public class ServidorPublico {
 
         UUID entidadeID = cargo.getEntidadeID();
 
-        Map<UUID, VinculoPublico> vinculosAtivosPorEntidade = vinculosAtivosPorEntidade();
+        Map<UUID, VinculoPublico> vinculosAtivosPorEntidade = vinculoAtivoPorEntidade();
 
         if (vinculosAtivosPorEntidade.containsKey(entidadeID)){
             Erros.operacaoInvalida("Servidor já possui um vínculo ativo na entidade indicada.");

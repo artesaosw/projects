@@ -10,4 +10,6 @@ public interface Entidades {
 
     void salvar(Entidade entidade);
 
+    boolean existe(TipoAdministracao tipoAdministracao);
+
 }

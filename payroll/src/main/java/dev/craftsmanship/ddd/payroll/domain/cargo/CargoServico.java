@@ -32,7 +32,7 @@ public class CargoServico {
         CargoReajustado evento = new CargoReajustado("Cargo reajustado.", null, reajuste);
     }
 
-    public Resultado novoCargo(UUID entidadeID, String descricao, double valor) {
+    public Resultado novoCargo(UUID entidadeID, String descricao, NaturezaCargo natureza, double valor) {
 
         try {
 
@@ -44,7 +44,7 @@ public class CargoServico {
                 Erros.parametroInvalido(CARGO_JA_EXISTENTE);
             }
 
-            Cargo cargo = new Cargo(entidadeID,descricao,valor);
+            Cargo cargo = new Cargo(entidadeID,descricao, natureza,valor);
             cargos.salvar(cargo);
 
             CargoDados cargoDto = new CargoDados(cargo);
