@@ -1,6 +1,5 @@
 package dev.craftsmanship.ddd.payroll.domain.servidor;
 
-import dev.craftsmanship.ddd.payroll.domain.Resultado;
 import dev.craftsmanship.ddd.payroll.utils.Erros;
 import lombok.Getter;
 
@@ -24,7 +23,7 @@ public class VinculoPublico implements Serializable {
     private boolean ativo;
 
     @Deprecated(since = "For ORM framework use only.")
-    public VinculoPublico() { }
+    VinculoPublico() { }
 
     public VinculoPublico(UUID entidadeID, UUID cargoId, LocalDate admissao) {
 

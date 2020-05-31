@@ -21,10 +21,12 @@ public class Entidade implements EntidadeContrato, Serializable {
     //TODO create a Cnpj class to encapsulate CNPJ digit validation
     private String cnpj;
 
+    private TipoAdministracao tipoAdministracao;
+
     @Deprecated(since = "For ORM framework use only.")
     Entidade() { }
 
-    public Entidade(String razaoSocial, String cnpj) {
+    public Entidade(String razaoSocial, String cnpj, TipoAdministracao tipoAdministracao) {
 
         if (razaoSocial == null || razaoSocial.trim().length() < 3) {
             parametroInvalido("Razão social deve ser informada.");
@@ -34,11 +36,16 @@ public class Entidade implements EntidadeContrato, Serializable {
             parametroInvalido("Um cnpj válido deve ser informado.");
         }
 
+        if (tipoAdministracao == null) {
+            parametroInvalido("Tipo de administração deve ser informado.");
+        }
+
         //TODO validate CNPJ and throw an IllegalArgumentException if invalid.
 
         this.identificacao = UUID.randomUUID();
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
+        this.tipoAdministracao = tipoAdministracao;
     }
 
     @Override

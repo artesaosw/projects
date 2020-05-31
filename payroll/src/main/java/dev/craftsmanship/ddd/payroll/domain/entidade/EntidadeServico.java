@@ -2,7 +2,9 @@ package dev.craftsmanship.ddd.payroll.domain.entidade;
 
 import dev.craftsmanship.ddd.payroll.domain.PublicadorEventos;
 import dev.craftsmanship.ddd.payroll.domain.Resultado;
-import dev.craftsmanship.ddd.payroll.utils.Erros;
+
+import static dev.craftsmanship.ddd.payroll.utils.Erros.operacaoInvalida;
+import static dev.craftsmanship.ddd.payroll.utils.Erros.parametroInvalido;
 
 public class EntidadeServico {
 
@@ -15,19 +17,27 @@ public class EntidadeServico {
         this.entidades = entidades;
     }
 
-    public Resultado novaEntidade(String razaoSocial, String cnpj){
+    public Resultado novaEntidade(String razaoSocial, String cnpj, TipoAdministracao tipoAdministracao){
 
         try {
 
             if (cnpj == null) {
-                Erros.parametroInvalido("Cnpj não informado.");
+                parametroInvalido("Cnpj não informado.");
             }
 
             if (entidades.existeCnpj(cnpj)) {
-                Erros.operacaoInvalida("Já existe uma entidade com o CNPJ informado.");
+                operacaoInvalida("Já existe uma entidade com o CNPJ informado.");
             }
 
-            Entidade entidade = new Entidade(razaoSocial, cnpj);
+            if (tipoAdministracao == null){
+                parametroInvalido("Tipo de administração deve ser informado.");
+            }
+
+            if (tipoAdministracao.equals(TipoAdministracao.DIRETA) && entidades.existe(TipoAdministracao.DIRETA)){
+                operacaoInvalida("Não é possível haver mais de uma entidade da administração direta registrada.");
+            }
+
+            Entidade entidade = new Entidade(razaoSocial, cnpj, tipoAdministracao);
             entidades.salvar(entidade);
 
             EntidadeDados entidadeDto = new EntidadeDados(entidade);

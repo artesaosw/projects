@@ -10,4 +10,5 @@ public interface EntidadeContrato {
 
     String getCnpj();
 
+    TipoAdministracao getTipoAdministracao();
 }
