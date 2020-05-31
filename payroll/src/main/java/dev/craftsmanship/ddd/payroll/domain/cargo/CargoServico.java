@@ -4,6 +4,10 @@ import dev.craftsmanship.ddd.payroll.domain.PublicadorEventos;
 import dev.craftsmanship.ddd.payroll.domain.Resultado;
 import dev.craftsmanship.ddd.payroll.domain.entidade.Entidades;
 import dev.craftsmanship.ddd.payroll.utils.Erros;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
+
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
+import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
 
 import java.util.UUID;
 
@@ -36,15 +40,15 @@ public class CargoServico {
 
         try {
 
-            if (entidadeID == null || descricao == null) {
-                Erros.parametroInvalido(PARAMETROS_NAO_INFORMADOS_INFORMADOS);
-            }
+            naoNulo(entidadeID, TipoErro.PARAMETRO_INVALIDO, PARAMETROS_NAO_INFORMADOS_INFORMADOS);
+
+            naoNulo(descricao, TipoErro.PARAMETRO_INVALIDO, PARAMETROS_NAO_INFORMADOS_INFORMADOS);
 
             if (cargos.existe(entidadeID,descricao.trim())){
-                Erros.parametroInvalido(CARGO_JA_EXISTENTE);
+                operacaoInvalida(CARGO_JA_EXISTENTE);
             }
 
-            Cargo cargo = new Cargo(entidadeID,descricao, natureza,valor);
+            Cargo cargo = new Cargo(entidadeID,descricao.trim(), natureza,valor);
             cargos.salvar(cargo);
 
             CargoDados cargoDto = new CargoDados(cargo);

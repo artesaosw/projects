@@ -2,23 +2,32 @@ package dev.craftsmanship.ddd.payroll.domain.servidor;
 
 import dev.craftsmanship.ddd.payroll.domain.cargo.Cargo;
 import dev.craftsmanship.ddd.payroll.utils.Erros;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 import lombok.Getter;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
+import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
+
+@Entity
 @Getter
 public class ServidorPublico implements ServidorPublicoContrato {
 
+    @Id
     private UUID identificacao;
 
     private String cpf;
 
     private String nome;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "servidor_publico_id")
     private Set<VinculoPublico> vinculos;
 
     @Deprecated(since = "For ORM framework use only.")
@@ -34,15 +43,13 @@ public class ServidorPublico implements ServidorPublicoContrato {
 
     public ServidorPublico(String cpf, String nome) {
 
-        if (cpf != null || cpf.trim().length() != 11) {
-            Erros.parametroInvalido("Cpf do servidor não foi informado ou inválido.");
-        }
+        naoNulo(cpf, TipoErro.PARAMETRO_INVALIDO, "Cpf do servidor não foi informado.");
+        comprimento(cpf,11,11,TipoErro.PARAMETRO_INVALIDO,"CPF inválido.");
 
         //TODO validate cpf check digit
 
-        if (nome == null || nome.trim().length() < 3) {
-            Erros.parametroInvalido("Nome do servidor não informado ou inválido.");
-        }
+        naoNulo(nome, TipoErro.PARAMETRO_INVALIDO, "Nome do servidor não informado");
+        comprimentoMinimo(nome,3, TipoErro.PARAMETRO_INVALIDO, "Nome do servidor ou inválido.");
 
         identificacao = UUID.randomUUID();
         this.cpf = cpf;
@@ -129,20 +136,16 @@ public class ServidorPublico implements ServidorPublicoContrato {
 
     public void registrarNomeacaoVinculo(Cargo cargo, LocalDate admissao){
 
-        if (cargo == null) {
-            Erros.parametroInvalido("Cargo não informado.");
-        }
+        naoNulo(cargo, TipoErro.PARAMETRO_INVALIDO, "Cargo não informado.");
 
-        if (admissao == null) {
-            Erros.parametroInvalido("Admissão não informada.");
-        }
+        naoNulo(admissao, TipoErro.PARAMETRO_INVALIDO, "Admissão não informada.");
 
         UUID entidadeID = cargo.getEntidadeID();
 
         Map<UUID, VinculoPublico> vinculosAtivosPorEntidade = vinculoAtivoPorEntidade();
 
         if (vinculosAtivosPorEntidade.containsKey(entidadeID)){
-            Erros.operacaoInvalida("Servidor já possui um vínculo ativo na entidade indicada.");
+            operacaoInvalida("Servidor já possui um vínculo ativo na entidade indicada.");
         }
 
         VinculoPublico novoVinculo = new VinculoPublico(entidadeID, cargo.getIdentificacao(), admissao);
@@ -151,24 +154,16 @@ public class ServidorPublico implements ServidorPublicoContrato {
 
     public void registrarDesligamento(UUID vinculoID, LocalDate desligamento) {
 
-        if (vinculoID == null) {
-            Erros.parametroInvalido("Vinculo a ser desligado não informado.");
-        }
+        naoNulo(vinculoID, TipoErro.PARAMETRO_INVALIDO, "Vinculo a ser desligado não informado.");
 
-        if (desligamento == null) {
-            Erros.parametroInvalido("Data de desligamento não informada.");
-        }
+        naoNulo(desligamento, TipoErro.PARAMETRO_INVALIDO, "Data de desligamento não informada.");
 
         VinculoPublico vinculo = getVinculo(vinculoID);
 
-        if (vinculo == null) {
-            Erros.informacoesInconsistentes(
-                    "Não há vínculo registrado para este servidor público com o " +
-                            "identificador indicado.");
-        }
+        naoNulo(vinculo, TipoErro.INFORMACAO_INCONSISTENTE, "Não há vínculo registrado para este servidor público com o " +
+                "identificador indicado.");
 
         vinculo.registrarDesligamento(desligamento);
-
     }
 
 

@@ -2,9 +2,10 @@ package dev.craftsmanship.ddd.payroll.domain.entidade;
 
 import dev.craftsmanship.ddd.payroll.domain.PublicadorEventos;
 import dev.craftsmanship.ddd.payroll.domain.Resultado;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 
-import static dev.craftsmanship.ddd.payroll.utils.Erros.operacaoInvalida;
-import static dev.craftsmanship.ddd.payroll.utils.Erros.parametroInvalido;
+import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
 public class EntidadeServico {
 
@@ -21,17 +22,13 @@ public class EntidadeServico {
 
         try {
 
-            if (cnpj == null) {
-                parametroInvalido("Cnpj não informado.");
-            }
+            naoNulo(cnpj, TipoErro.PARAMETRO_INVALIDO, "Cnpj não informado.");
 
             if (entidades.existeCnpj(cnpj)) {
                 operacaoInvalida("Já existe uma entidade com o CNPJ informado.");
             }
 
-            if (tipoAdministracao == null){
-                parametroInvalido("Tipo de administração deve ser informado.");
-            }
+            naoNulo(tipoAdministracao, TipoErro.PARAMETRO_INVALIDO, "Tipo de administração deve ser informado.");
 
             if (tipoAdministracao.equals(TipoAdministracao.DIRETA) && entidades.existe(TipoAdministracao.DIRETA)){
                 operacaoInvalida("Não é possível haver mais de uma entidade da administração direta registrada.");

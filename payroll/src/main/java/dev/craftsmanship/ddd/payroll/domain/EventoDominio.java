@@ -1,9 +1,12 @@
 package dev.craftsmanship.ddd.payroll.domain;
 
 import dev.craftsmanship.ddd.payroll.utils.Erros;
+import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
 public abstract class EventoDominio implements Serializable {
 
@@ -14,9 +17,7 @@ public abstract class EventoDominio implements Serializable {
 
     public EventoDominio(String descricao, Serializable excecao, Serializable dadosAdicionais) {
 
-        if (descricao == null) {
-            Erros.parametroInvalido("Descricao do evento não informada.");
-        }
+        naoNulo(descricao, TipoErro.PARAMETRO_INVALIDO, "Descricao do evento não informada.");
 
         this.dataHora = LocalDateTime.now();
         this.descricao = descricao;
