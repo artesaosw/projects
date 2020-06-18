@@ -42,7 +42,7 @@ public class CargoServico {
             Cargo cargo = new Cargo(entidadeID,descricao.trim(), natureza,valor);
             cargos.salvar(cargo);
 
-            CargoDados cargoDto = new CargoDados(cargo);
+            CargoDados cargoDto = CargoDados.criar(cargo);
             publicadorEventos.publicar(NovoCargoRegistrado.class, cargoDto, null, "Novo cargo registrado.");
 
             return Resultado.positivo(cargoDto);

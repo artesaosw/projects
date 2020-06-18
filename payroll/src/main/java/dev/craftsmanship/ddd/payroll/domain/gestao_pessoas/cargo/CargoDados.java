@@ -2,31 +2,26 @@ package dev.craftsmanship.ddd.payroll.domain.gestao_pessoas.cargo;
 
 import dev.craftsmanship.ddd.payroll.utils.TipoErro;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
+import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.naoNulo;
 
 @Getter
-@Setter
-public class CargoDados implements Serializable, CargoContrato{
+public record CargoDados(UUID identificacao, UUID entidadeID, String descricao, double valor)
+        implements Serializable, CargoContrato{
 
-    private UUID identificacao;
-    private UUID entidadeID;
-    private String descricao;
-    private double valor;
-
-    public CargoDados() { }
-
-    public  CargoDados(CargoContrato contrato){
+    public static CargoDados criar(CargoContrato contrato) {
 
         naoNulo(contrato, TipoErro.PARAMETRO_INVALIDO, "Parâmetros de entrada não informados.");
+        naoNulo(TipoErro.PARAMETRO_INVALIDO, "Parâmetro de entrada não possui os dados requeridos.",
+                contrato.getIdentificacao(), contrato.getEntidadeID(), contrato.getDescricao(), contrato.getValor());
 
-        this.identificacao = contrato.getIdentificacao();
-        this.descricao = contrato.getDescricao();
-        this.entidadeID = contrato.getEntidadeID();
-        this.valor = contrato.getValor();
+        return new CargoDados(
+                contrato.getIdentificacao(),
+                contrato.getEntidadeID(),
+                contrato.getDescricao(),
+                contrato.getValor());
     }
 }

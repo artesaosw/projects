@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
@@ -58,15 +59,15 @@ public class Periodo implements Serializable {
         return inicio.isBefore(other.termino) && termino.isAfter(other.inicio);
     }
 
-    public Periodo interseccao(Periodo other){
+    public Optional<Periodo> interseccao(Periodo other){
 
         if (!intersecta(other)){
-            return null;
+            return Optional.empty();
         }
 
         LocalDate maxInicio = inicio.isAfter(other.inicio) ? inicio : other.inicio;
         LocalDate minTermino = termino.isBefore(other.termino) ? termino : other.termino;
 
-        return new Periodo(maxInicio,minTermino);
+        return Optional.of(new Periodo(maxInicio,minTermino));
     }
 }

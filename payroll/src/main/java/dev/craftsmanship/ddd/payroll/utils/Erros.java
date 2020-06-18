@@ -3,7 +3,6 @@ package dev.craftsmanship.ddd.payroll.utils;
 import dev.craftsmanship.ddd.payroll.utils.excecoes.InconsistentInformationsException;
 import dev.craftsmanship.ddd.payroll.utils.excecoes.InconsistentStateException;
 import dev.craftsmanship.ddd.payroll.utils.excecoes.InvalidOperationException;
-import lombok.SneakyThrows;
 
 import java.lang.reflect.InvocationTargetException;
 

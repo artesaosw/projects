@@ -1,6 +1,7 @@
 package dev.craftsmanship.ddd.payroll.domain.folha_pagamento;
 
 import dev.craftsmanship.ddd.payroll.utils.TipoErro;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
+@Getter
 public class Movimentacao {
 
     private UUID id;
@@ -33,7 +35,7 @@ public class Movimentacao {
     public Movimentacao(Competencia competencia, TipoProcessamento tipoProcessamento, UUID vinculoPublicoID,
                         int cargaHoraria, int horasExtras, double salarioMensal) {
 
-        naoNulo(TipoErro.PARAMETRO_INVALIDO, "Parametros inválidos!", competencia, tipoProcessamento,
+        naoNulo(TipoErro.PARAMETRO_INVALIDO, "Parametro(s) inválido(s)!", competencia, tipoProcessamento,
                 vinculoPublicoID, cargaHoraria, salarioMensal);
 
         this.id = UUID.randomUUID();
