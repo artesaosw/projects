@@ -1,29 +1,19 @@
 package dev.craftsmanship.ddd.payroll.domain.gestao_pessoas.entidade;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
-@Setter
-public class EntidadeDados implements EntidadeContrato, Serializable {
+public record EntidadeDados(UUID identificacao, String razaoSocial, String cnpj, TipoAdministracao tipoAdministracao)
+        implements EntidadeContrato, Serializable {
 
-    private UUID identificacao;
-
-    private String razaoSocial;
-
-    private String cnpj;
-
-    private TipoAdministracao tipoAdministracao;
-
-    public EntidadeDados() { }
-
-    public EntidadeDados(EntidadeContrato contrato) {
-        this.identificacao = contrato.getIdentificacao();
-        this.razaoSocial = contrato.getRazaoSocial();
-        this.cnpj = contrato.getCnpj();
-        this.tipoAdministracao = contrato.getTipoAdministracao();
+    public static EntidadeDados criar(EntidadeContrato contrato) {
+        return new EntidadeDados(
+                contrato.getIdentificacao(),
+                contrato.getRazaoSocial(),
+                contrato.getCnpj(),
+                contrato.getTipoAdministracao());
     }
 }

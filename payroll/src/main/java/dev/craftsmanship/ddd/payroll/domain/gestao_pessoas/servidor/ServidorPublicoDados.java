@@ -12,30 +12,28 @@ import java.util.stream.Collectors;
 import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
 @Getter
-@Setter
-public class ServidorPublicoDados implements ServidorPublicoContrato, Serializable  {
+public record ServidorPublicoDados(UUID identificacao, String cpf, String nome, Set<VinculoPublicoDados> vinculos) implements ServidorPublicoContrato, Serializable  {
 
-    private UUID identificacao;
+    public ServidorPublicoDados(UUID identificacao, String cpf, String nome, Set<VinculoPublicoDados> vinculos) {
 
-    private String cpf;
+        naoNulo(TipoErro.PARAMETRO_INVALIDO, "Parâmetro(s) inválido(s).", identificacao, cpf, nome, vinculos);
 
-    private String nome;
+        this.identificacao = identificacao;
+        this.cpf = cpf;
+        this.nome = nome;
+        this.vinculos = vinculos;
+    }
 
-    private Set<VinculoPublicoDados> vinculos;
-
-    public ServidorPublicoDados() { }
-
-    public ServidorPublicoDados(ServidorPublicoContrato contrato) {
+    public static ServidorPublicoDados criar(ServidorPublicoContrato contrato) {
 
         naoNulo(contrato, TipoErro.PARAMETRO_INVALIDO, "Dados não informados.");
+        naoNulo(contrato.getVinculos(), TipoErro.PARAMETRO_INVALIDO, "Lista de vínculos do servidor");
 
-        this.identificacao = contrato.getIdentificacao();
-        this.cpf = contrato.getCpf();
-        this.nome = contrato.getNome();
-        this.vinculos = contrato.getVinculos()
+        Set<VinculoPublicoDados> vinculos = contrato.getVinculos()
                 .stream()
-                .map(vp -> new VinculoPublicoDados(vp))
+                .map(vp -> VinculoPublicoDados.criar(vp))
                 .collect(Collectors.toSet());
 
+        return new ServidorPublicoDados(contrato.getIdentificacao(), contrato.getCpf(), contrato.getNome(), vinculos);
     }
 }

@@ -37,7 +37,7 @@ public class EntidadeServico {
             Entidade entidade = new Entidade(razaoSocial, cnpj, tipoAdministracao);
             entidade = entidades.salvar(entidade);
 
-            EntidadeDados dados = new EntidadeDados(entidade);
+            EntidadeDados dados = EntidadeDados.criar(entidade);
             publicadorEventos.publicar(NovaEntidadeRegistrada.class, dados, null, "Nova entidade registrada.");
 
             return Resultado.positivo(dados);

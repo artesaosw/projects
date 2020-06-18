@@ -29,7 +29,7 @@ public class ServidorPublicoServico {
     }
 
     private ServidorPublicoDados dadosDe(ServidorPublicoContrato dadosServidorPublico) {
-        return new ServidorPublicoDados(dadosServidorPublico);
+        return ServidorPublicoDados.criar(dadosServidorPublico);
     }
 
     public Resultado registrarNovoServidorPublico(final String cpf, final String nome) {
@@ -57,9 +57,11 @@ public class ServidorPublicoServico {
 
         return executar(() -> {
 
+            //validando parametros por si só
             naoNulo(servidorPublicoID, TipoErro.PARAMETRO_INVALIDO, "Identificação do servidor público não informada.");
             naoNulo(cargoId, TipoErro.PARAMETRO_INVALIDO, "Identificação do cargo não informada.");
 
+            //validando parametros contra o estado persistente do sistema
             final ServidorPublico servidorPublico = servidoresPublicos.pesquisarID(servidorPublicoID);
             naoNulo(servidorPublico, TipoErro.PARAMETRO_INVALIDO, "Não existe servidor público com a identificação informada.");
 
@@ -68,9 +70,12 @@ public class ServidorPublicoServico {
 
             iguais(cargo.getEntidadeID(), entidadeID, TipoErro.OPERACAO_INVALIDA, "Não é possível registrar um vínculo público com cargo cuja entidade é diferente da entidade do vínculo.");
 
+            //executando a operação de negócios
             servidorPublico.registrarNomeacaoVinculo(cargo,admissao);
+            //persistindo o novo estado
             servidoresPublicos.salvar(servidorPublico);
 
+            //notificando partes interessadas da alteração de estado
             final ServidorPublicoDados dados = dadosDe(servidorPublico);
             publicadorEventos.publicar(NovoVinculoPublicoRegistrado.class, dados, null, "Novo vínculo público registrado.");
 

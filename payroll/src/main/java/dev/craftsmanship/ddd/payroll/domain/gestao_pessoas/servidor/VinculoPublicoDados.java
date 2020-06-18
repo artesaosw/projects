@@ -11,32 +11,27 @@ import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 
 @Getter
 @Setter
-public class VinculoPublicoDados implements VinculoPublicoContrato {
+public record VinculoPublicoDados(UUID identificacao, UUID entidadeID, UUID cargoId, LocalDate admissao,
+                                  LocalDate desligamento, boolean ativo) implements VinculoPublicoContrato {
 
-    private UUID identificacao;
+    public VinculoPublicoDados(UUID identificacao, UUID entidadeID, UUID cargoId, LocalDate admissao, LocalDate desligamento, boolean ativo) {
 
-    private UUID entidadeID;
+        naoNulo(TipoErro.PARAMETRO_INVALIDO,"Parâmetros inválidos.", identificacao, entidadeID, cargoId, admissao);
 
-    private UUID cargoId;
+        this.identificacao = identificacao;
+        this.entidadeID = entidadeID;
+        this.cargoId = cargoId;
+        this.admissao = admissao;
+        this.desligamento = desligamento;
+        this.ativo = ativo;
+    }
 
-    private LocalDate admissao;
-
-    private LocalDate desligamento;
-
-    private boolean ativo;
-
-    public VinculoPublicoDados() { }
-
-    public VinculoPublicoDados(VinculoPublicoContrato contrato) {
+    public static VinculoPublicoDados criar(VinculoPublicoContrato contrato) {
 
         naoNulo(contrato, TipoErro.PARAMETRO_INVALIDO, "Dados de entrada não informados.");
 
-        this.identificacao = contrato.getIdentificacao();
-        this.entidadeID = contrato.getEntidadeID();
-        this.cargoId = contrato.getCargoId();
-        this.admissao = contrato.getAdmissao();
-        this.desligamento = contrato.getDesligamento();
-        this.ativo = contrato.isAtivo();
+        return new VinculoPublicoDados(contrato.getIdentificacao(), contrato.getEntidadeID(), contrato.getCargoId(),
+                contrato.getAdmissao(), contrato.getDesligamento(), contrato.isAtivo());
     }
     
 }

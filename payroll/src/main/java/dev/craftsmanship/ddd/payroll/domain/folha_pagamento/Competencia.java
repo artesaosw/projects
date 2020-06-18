@@ -10,7 +10,6 @@ import java.util.Objects;
 import static dev.craftsmanship.ddd.payroll.utils.validacoes.Validacoes.*;
 import static dev.craftsmanship.ddd.payroll.utils.Erros.*;
 
-@Embeddable
 @Getter
 public class Competencia {
 
